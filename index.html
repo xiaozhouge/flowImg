@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>jsPlumb Demo</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="./jsPlumbTest3.css">
+	<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdn.bootcss.com/jsPlumb/2.7.3/js/jsplumb.min.js"></script>
+</head>
+
+<body>
+	<div id="main">
+		<div class="flowchart-demo">
+		</div>
+	</div>
+</body>
+
+<script>
+	const ininPage = () => {
+		let { total, rows: source } = {
+			"total": 7, "rows": [
+				{ "id": 1, "name": "All Tasks" },
+				{ "id": 2, "name": "Designing", "_parentId": 1 },
+				{ "id": 3, "name": "SaaS", "_parentId": 1 },
+				{ "id": 21, "name": "Database", "persons": "Database", "_parentId": 2 },
+				{ "id": 22, "name": "UML", "persons": "UML", "_parentId": 2 },
+				{ "id": 23, "name": "Export Document", "persons": "1", "_parentId": 2 },
+				{ "id": 24, "name": "sass-loader", "persons": "sass-loader", "_parentId": 3 },
+				{ "id": 25, "name": "justsoso", "persons": "justsoso", "_parentId": 3 },
+				{ "id": 26, "name": "justchildren", "persons": "justchildren", "_parentId": 25 }
+			]
+		}
+		let templateString = '';
+		//实例化jsPlumb
+		let firstInstance = jsPlumb.getInstance();
+		firstInstance.importDefaults({
+			Connector: ["Flowchart", { curviness: 100 }],
+			Anchors: ["BottomCenter", "TopCenter",],
+			PaintStyle: {
+				strokeWidth: 1,
+				stroke: "red",
+				outlineStroke: "red",
+				outlineWidth: 1
+			},
+			Endpoint: ["Dot", { radius: 5 }],
+		});
+		//生成元素
+		for (let i = 0; i < source.length; i++) {
+			templateString += `
+					<div class="window"  id="element${source[i].id}">
+						<strong>${source[i].name}</strong>
+					</div>
+			`;
+		};
+		$('.flowchart-demo').html(templateString);
+		//连线
+		for (let i = 0; i < source.length; i++) {
+			firstInstance.connect({
+				source: `element${source[i]._parentId}`,
+				target: `element${source[i].id}`,
+				overlays: [
+					"Arrow",
+					// [ "Label", { label:"foo", location:50, id:"myLabel" } ]
+				],
+			});
+		};
+	}
+	//调用
+	jsPlumb.bind("ready", function () {
+		ininPage()
+	});
+</script>
+
+</html>
